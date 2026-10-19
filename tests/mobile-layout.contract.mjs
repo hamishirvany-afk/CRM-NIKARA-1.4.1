@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+function assert(c,m){if(!c){console.error('MOBILE_LAYOUT_CONTRACT_FAIL:',m);process.exit(1)}}
+const html=fs.readFileSync('frontend/index.html','utf8');
+const css=fs.readFileSync('frontend/style.css','utf8');
+assert(html.includes('class="bottom-nav"'),'bottom navigation missing');
+const nav=html.match(/<nav class="bottom-nav"[\s\S]*?<\/nav>/)?.[0]||'';
+const buttons=(nav.match(/<button\b/g)||[]).length;
+assert(buttons===5,`expected 5 primary mobile nav buttons, got ${buttons}`);
+assert(css.includes('grid-template-columns:1fr 1fr 64px 1fr 1fr'),'professional five-slot nav grid missing');
+assert(css.includes('safe-area-inset-bottom'),'Android/iOS bottom safe-area handling missing');
+assert(css.includes('safe-area-inset-top'),'top safe-area handling missing');
+assert(css.includes('max-height:92dvh')||css.includes('max-height:91dvh'),'mobile sheet viewport constraint missing');
+assert(!/type=["'](?:date|datetime-local)["']/.test(html),'raw Gregorian date input remains in HTML');
+assert(html.includes('datePickerLayer'),'Persian date picker layer missing');
+assert(css.includes('.date-picker-trigger')&&css.includes('.date-picker-day'),'date picker touch UI missing');
+assert(css.includes('min-height:42px')||css.includes('min-height:43px'),'date picker targets are too small');
+assert(css.includes('Nikara UI'),'bundled offline font family missing');
+assert(fs.existsSync('frontend/fonts/nikara-ui-regular.ttf')&&fs.existsSync('frontend/fonts/nikara-ui-bold.ttf'),'offline UI font files missing');
+assert(html.includes('data-text-size-choice="large"')&&html.includes('highContrastSetting'),'readability preferences missing');
+console.log('MOBILE_LAYOUT_CONTRACT_PASS');

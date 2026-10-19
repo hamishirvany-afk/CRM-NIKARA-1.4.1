@@ -1,0 +1,4 @@
+first_name,last_name,company,job_title,department,phone,secondary_phones,email,whatsapp,address,source,status,deal_value,is_primary_contact
+علی,رضایی,آرتا تجارت,مدیر خرید,خرید,09121234567,02188776655,ali@example.com,09121234567,تهران,csv,qualified,0,true
+مریم,کاظمی,آرتا تجارت,مدیر مالی,مالی,09123456789,,maryam@example.com,,تهران,csv,contacted,0,false
+رضا,احمدی,,مشتری شخصی,,09351234567,,reza@example.com,,کرج,csv,new,25000000,false

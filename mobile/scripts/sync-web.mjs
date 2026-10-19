@@ -1,0 +1,11 @@
+import { cp, rm, mkdir } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const scriptDir = dirname(fileURLToPath(import.meta.url));
+const mobileDir = resolve(scriptDir, '..');
+const src = resolve(mobileDir, '../frontend');
+const dst = resolve(mobileDir, 'www');
+await rm(dst, { recursive: true, force: true });
+await mkdir(dst, { recursive: true });
+await cp(src, dst, { recursive: true });
+console.log('Frontend copied to mobile/www');

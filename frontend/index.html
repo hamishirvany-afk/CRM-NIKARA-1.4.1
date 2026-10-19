@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0B1220">
+  <meta name="description" content="CRM-NIKARA — CRM آفلاین حرفه‌ای با Caller ID، پروژه‌ها، شبکه کاری و اسناد مشتری">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>CRM-NIKARA</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="appView" class="app">
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark small">N</span><div><b>CRM-NIKARA</b><small id="engineLabel">آفلاین و خصوصی</small></div></div>
+    <nav id="nav">
+      <button data-tab="dashboard" class="active">⌂ <span>داشبورد</span></button>
+      <button data-tab="organizations">▣ <span>شرکت‌ها</span></button>
+      <button data-tab="contacts">☷ <span>افراد</span></button>
+      <button data-tab="projects">◆ <span>پروژه‌ها / فرصت‌ها</span></button>
+      <button data-tab="calendar">▦ <span>تقویم شمسی</span></button>
+      <button data-tab="network">⌘ <span>شبکه کاری</span></button>
+      <button data-tab="finance">﷼ <span>حساب مشتریان</span></button>
+      <button data-tab="invoices">🧾 <span>فاکتورها</span></button>
+      <button data-tab="documents">▤ <span>مدارک</span></button>
+      <button data-tab="tasks">✓ <span>پیگیری‌ها</span></button>
+      <button data-tab="social">✦ <span>پیش‌نویس‌ها</span></button>
+      <button data-tab="automation">☰ <span>رویدادهای محلی</span></button>
+      <button data-tab="settings">⚙ <span>تنظیمات</span></button>
+    </nav>
+    <div class="sidebar-foot"><div class="product-foot"><b>CRM-NIKARA</b><small>v1.4.0 · H.Shirvani</small></div><span class="muted offline-status">● داده‌ها روی همین دستگاه</span></div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div><h2 id="pageTitle">داشبورد</h2><div id="pageSub" class="muted">CRM-NIKARA · مدیریت ارتباطات و پروژه‌ها روی همین دستگاه</div></div>
+      <div class="top-actions"><button class="btn top-search" type="button" onclick="openGlobalSearch()" aria-label="جستجو در همه CRM"><span aria-hidden="true">⌕</span><span class="top-search-label">جستجو</span></button><button class="btn primary" onclick="openQuickAdd()">+ افزودن</button></div>
+    </header>
+
+    <section id="dashboard" class="page">
+      <div id="callerHome" class="caller-home hidden" aria-live="polite"></div>
+      <div class="finder finder-home" role="search">
+        <div class="finder-head"><h3>پیدا کردن مشتری</h3><span class="muted">نام، شرکت، سمت، چند رقم از شماره، شماره فاکتور، نام فایل یا متن یادداشت</span></div>
+        <div class="finder-box"><span class="finder-icon" aria-hidden="true">⌕</span><input id="homeSearch" type="search" enterkeyhint="search" autocomplete="off" placeholder="مثلاً «رضایی»، «نیکان» یا «۴۵۶۷»" aria-label="جستجوی مشتری، شرکت، پروژه و فایل" oninput="debouncedHomeSearch()" onkeydown="searchKey(event,'homeSearch')"><button type="button" class="finder-clear hidden" id="homeSearchClear" aria-label="پاک کردن جستجو" onclick="clearHomeSearch()">×</button></div>
+        <div id="homeSearchResults" class="finder-results" aria-live="polite"></div>
+      </div>
+      <div id="stats" class="stats"></div>
+      <div class="two-col">
+        <div class="panel"><div class="panel-head"><h3>قیف فروش</h3></div><div id="pipeline"></div></div>
+        <div class="panel"><div class="panel-head"><h3>پیگیری‌های نزدیک</h3><button class="link" onclick="switchTab('tasks')">همه</button></div><div id="dashboardTasks"></div></div>
+      </div>
+      <div class="panel"><div class="panel-head"><h3>آخرین فعالیت‌ها</h3><button class="link" onclick="switchTab('automation')">رویدادها</button></div><div id="recentActivity"></div></div>
+      <div class="two-col">
+        <div class="panel"><div class="panel-head"><h3>جلسات پیش‌رو</h3><button class="link" onclick="switchTab('calendar')">تقویم</button></div><div id="dashboardMeetings"></div></div>
+        <div class="panel"><div class="panel-head"><h3>وضعیت مالی</h3><button class="link" onclick="switchTab('finance')">دفتر حساب</button></div><div id="dashboardFinance" class="mini-finance"></div></div>
+      </div>
+      <div class="panel"><div class="panel-head"><h3>شرکت‌های اخیر</h3><button class="link" onclick="switchTab('organizations')">مشاهده همه</button></div><div id="recentOrganizations" class="contact-grid compact-grid"></div></div>
+      <div class="panel"><div class="panel-head"><h3>پروژه‌ها / فرصت‌های اخیر</h3><button class="link" onclick="switchTab('projects')">مشاهده همه</button></div><div id="recentProjects" class="project-list compact-project-list"></div></div>
+      <div class="panel"><div class="panel-head"><h3>افراد اخیر</h3><button class="link" onclick="switchTab('contacts')">مشاهده همه</button></div><div id="recentContacts" class="table-wrap"></div></div>
+    </section>
+
+    <section id="organizations" class="page hidden">
+      <div class="toolbar panel">
+        <input id="orgSearch" type="search" enterkeyhint="search" placeholder="نام شرکت، نام افراد شرکت، چند رقم شماره، شناسه ملی..." oninput="debouncedOrganizations()">
+        <select id="orgStageFilter" onchange="loadOrganizations()"><option value="">همه مراحل</option></select>
+        <button class="btn primary" onclick="openNewOrganization()">+ شرکت جدید</button>
+        <button class="btn" onclick="openOrganizationImport()">ورود CSV شرکت‌ها</button>
+      </div>
+      <div id="organizationList" class="contact-grid"></div>
+    </section>
+
+    <section id="contacts" class="page hidden">
+      <div class="toolbar panel">
+        <input id="search" type="search" enterkeyhint="search" placeholder="نام، شرکت، سمت، چند رقم از شماره، ایمیل..." oninput="debouncedContacts()">
+        <select id="stageFilter" onchange="loadContacts()"><option value="">همه مراحل</option></select>
+        <button class="btn primary" onclick="openNewPerson()">+ شخص جدید</button>
+        <button class="btn" onclick="openImport()">ورود CSV افراد</button>
+      </div>
+      <div id="contactList" class="contact-grid"></div>
+    </section>
+
+        <section id="projects" class="page hidden">
+      <div class="panel project-hero"><div><h3>پروژه‌ها و فرصت‌های کاری</h3><p class="muted">هر سفارش، واردات، فروش یا پرونده کاری را یکجا نگه دار؛ مشتری، تامین‌کننده، حمل‌ونقل، ترخیص‌کار، اسناد، فاکتورها و پیگیری‌ها زیر همان پرونده.</p></div><button class="btn primary" onclick="openNewProject()">+ پرونده جدید</button></div>
+      <div class="toolbar panel project-toolbar">
+        <input id="projectSearch" placeholder="عنوان، شماره مرجع، مشتری یا توضیحات..." oninput="debouncedProjects()">
+        <select id="projectStageFilter" onchange="loadProjects()"><option value="">همه مراحل</option></select>
+        <select id="projectTypeFilter" onchange="loadProjects()"><option value="">همه انواع</option></select>
+      </div>
+      <div id="projectList" class="project-list"></div>
+    </section>
+
+
+    <section id="calendar" class="page hidden">
+      <div class="panel calendar-hero">
+        <div><span class="eyebrow">برنامه‌ریزی شمسی</span><h3>تقویم شمسی و یادآوری‌ها</h3><p class="muted">یادآوری‌های مستقل، جلسه‌ها، پیگیری‌ها، سررسید حساب‌ها و انقضای مدارک در یک تقویم شمسی.</p></div>
+        <div class="actions"><button class="btn primary" onclick="openReminder()">+ یادآوری</button><button class="btn" onclick="openMeeting()">+ جلسه</button><button class="btn" onclick="openTask()">+ پیگیری</button></div>
+      </div>
+      <div class="panel calendar-toolbar">
+        <button class="btn" onclick="changeCalendarMonth(-1)">ماه قبل</button>
+        <div class="calendar-title"><b id="calendarTitle"></b><small id="calendarToday"></small></div>
+        <button class="btn" onclick="goCalendarToday()">امروز</button>
+        <button class="btn" onclick="changeCalendarMonth(1)">ماه بعد</button>
+      </div>
+      <div id="persianCalendar" class="persian-calendar"></div>
+      <div class="two-col calendar-lists">
+        <div class="panel"><div class="panel-head"><h3>جلسات آینده</h3><button class="link" onclick="openMeeting()">+ جلسه</button></div><div id="meetingList"></div></div>
+        <div class="panel"><div class="panel-head"><h3>موارد نزدیک</h3></div><div id="calendarAgenda"></div></div>
+        <div class="panel reminders-panel"><div class="panel-head"><div><h3>یادآوری‌های مستقل</h3><div class="muted">بدون نیاز به ساخت پیگیری یا جلسه</div></div><button class="btn primary" onclick="openReminder()">+ یادآوری</button></div><div id="reminderList"></div></div>
+      </div>
+    </section>
+
+    <section id="finance" class="page hidden">
+      <div class="panel finance-hero">
+        <div><span class="eyebrow">دفتر حساب طرف‌ها</span><h3>طلب، بدهی، دریافت و پرداخت</h3><p class="muted">یک دفتر حساب عملیاتی برای مشتری و تأمین‌کننده؛ با سررسید، مانده، پرداخت جزئی و گزارش معوق.</p></div>
+        <button class="btn primary" onclick="openFinanceEntry()">+ ثبت تراکنش</button>
+      </div>
+      <div id="financeStats" class="stats finance-stats"></div>
+      <div id="financeAgeing" class="panel finance-ageing"></div>
+      <div class="toolbar panel finance-toolbar">
+        <input id="financeSearch" placeholder="نام طرف حساب، شماره مرجع یا توضیح..." oninput="debouncedFinance()">
+        <select id="financeKindFilter" onchange="loadFinance()"><option value="">همه تراکنش‌ها</option><option value="sales_invoice">طلب / فاکتور فروش</option><option value="receipt">دریافت</option><option value="purchase_invoice">بدهی / فاکتور خرید</option><option value="payment">پرداخت</option><option value="receivable_adjustment">اصلاح طلب</option><option value="payable_adjustment">اصلاح بدهی</option></select>
+        <button class="btn" onclick="openFinanceEntry()">ثبت تراکنش</button>
+      </div>
+      <div class="two-col finance-layout">
+        <div class="panel"><div class="panel-head"><h3>مانده طرف حساب‌ها</h3></div><div id="partyBalanceList"></div></div>
+        <div class="panel"><div class="panel-head"><h3>دفتر تراکنش‌ها</h3></div><div id="financeList"></div></div>
+      </div>
+    </section>
+
+    <section id="invoices" class="page hidden">
+      <div class="panel invoice-hero"><div><span class="eyebrow">اسناد فروش</span><h3>فاکتور و پیش‌فاکتور</h3><p class="muted">شماره‌گذاری خودکار، مشتری از CRM یا ورود دستی، محاسبه ریال، کالاهای کددار و چاپ / PDF قابل تنظیم.</p></div><div class="actions"><button class="btn" onclick="openInvoiceEditor('proforma')">+ پیش‌فاکتور</button><button class="btn primary" onclick="openInvoiceEditor('invoice')">+ فاکتور</button></div></div>
+      <div class="invoice-tabs" role="tablist"><button type="button" class="btn active" data-inv-view="invoice" onclick="setInvoiceView('invoice')">🧾 فاکتورها</button><button type="button" class="btn" data-inv-view="proforma" onclick="setInvoiceView('proforma')">📄 پیش‌فاکتورها</button><button type="button" class="btn" data-inv-view="products" onclick="setInvoiceView('products')">📦 کالاها و خدمات</button><button type="button" class="btn" data-inv-view="settings" onclick="setInvoiceView('settings')">⚙ تنظیمات فاکتور</button></div>
+      <div id="invoiceStats" class="stats"></div>
+      <div id="invoiceToolbar" class="toolbar panel"><input id="invoiceSearch" placeholder="شماره، مشتری، کد کالا، شرح یا شماره تلفن..." oninput="debouncedInvoices()"><select id="invoiceStatusFilter" onchange="loadInvoices()"><option value="">همه وضعیت‌ها</option></select><button class="btn" onclick="loadInvoices()">جستجو</button></div>
+      <div id="invoiceContent"></div>
+    </section>
+
+    <section id="documents" class="page hidden">
+      <div class="panel docs-hero">
+        <div><span class="eyebrow">مدارک و انقضا</span><h3>مدارک گرفته‌شده / موردنیاز</h3><p class="muted">کارت ملی، روزنامه رسمی، مجوز، قرارداد، کارت بازرگانی، بارنامه، مدارک پزشکی و هر مدرک اختصاصی.</p></div>
+        <div class="actions"><button class="btn" onclick="openDocumentTemplate()">بسته آماده مدارک</button><button class="btn primary" onclick="openDocumentCheck()">+ ثبت مدرک</button></div>
+      </div>
+      <div id="documentStats" class="stats document-stats"></div>
+      <div class="panel files-panel">
+        <div class="panel-head"><div><h3>فایل‌ها و فاکتورهای مشتریان</h3><div class="muted">جستجو در عنوان، نام فایل، شماره فاکتور، برچسب، یادداشت، مبلغ و نام مشتری</div></div><span id="fileCount" class="badge"></span></div>
+        <div class="toolbar files-toolbar"><input id="fileSearch" type="search" enterkeyhint="search" placeholder="مثلاً «قرارداد»، «INV-77» یا نام مشتری..." aria-label="جستجوی فایل‌ها" oninput="debouncedFiles()"><select id="fileCategoryFilter" aria-label="نوع فایل" onchange="loadFiles()"><option value="">همه انواع</option><option value="invoice">فاکتور</option><option value="proforma">پیش‌فاکتور</option><option value="receipt">رسید</option><option value="contract">قرارداد</option><option value="document">سند</option><option value="other">سایر</option></select></div>
+        <div id="fileList" class="document-list"></div>
+      </div>
+      <div class="toolbar panel docs-toolbar">
+        <input id="documentSearch" placeholder="عنوان مدرک، شماره، صادرکننده یا پرونده..." oninput="debouncedDocuments()">
+        <select id="documentStatusFilter" onchange="loadDocuments()"><option value="">همه وضعیت‌ها</option><option value="required">دریافت نشده</option><option value="received">دریافت شده</option><option value="verified">تأیید شده</option><option value="expired">منقضی</option><option value="rejected">رد شده</option></select>
+        <button class="btn" onclick="openDocumentCheck()">ثبت مدرک</button>
+      </div>
+      <div id="documentList" class="document-check-list"></div>
+    </section>
+
+<section id="network" class="page hidden">
+      <div class="panel network-hero">
+        <div>
+          <h3>شبکه کاری و سرویس‌دهندگان</h3>
+          <p class="muted">حمل‌ونقل، ترخیص‌کار، تامین‌کننده، پزشک، داروخانه، آزمایشگاه، بیمه و سایر ارتباطات حرفه‌ای را از همان پرونده‌های شرکت و افراد مدیریت کن؛ بدون ساخت دیتای تکراری.</p>
+        </div>
+        <button class="btn primary" onclick="openQuickAdd()">+ افزودن</button>
+      </div>
+      <div class="toolbar panel network-toolbar">
+        <input id="networkSearch" placeholder="نام، حوزه، شرکت، شخص یا شماره..." oninput="debouncedNetwork()">
+        <select id="networkCategory" onchange="loadNetwork()"><option value="">همه دسته‌ها</option></select>
+      </div>
+      <div id="networkSummary" class="network-summary"></div>
+      <div id="networkList" class="network-list"></div>
+    </section>
+
+    <section id="tasks" class="page hidden">
+      <div class="panel"><div class="panel-head"><h3>کارها و پیگیری‌ها</h3><div class="actions"><button class="btn primary" onclick="openTask()">+ پیگیری جدید</button><button class="btn" onclick="openMeeting()">+ جلسه</button><button class="btn" onclick="openReminder()">+ یادآوری مستقل</button></div></div><div id="taskList"></div></div>
+      <div class="panel reminders-panel"><div class="panel-head"><div><h3>یادآوری‌های مستقل</h3><div class="muted">اعلان‌های عمومی که به Task یا Meeting وابسته نیستند.</div></div><button class="btn" onclick="openReminder()">+ یادآوری</button></div><div id="taskReminderList"></div></div>
+    </section>
+
+    <section id="social" class="page hidden">
+      <div class="two-col social-layout">
+        <div class="panel"><h3>پیش‌نویس محتوا</h3>
+          <label>عنوان داخلی<input id="postTitle" placeholder="مثلاً پست معرفی محصول"></label>
+          <label>متن<textarea id="postBody" placeholder="متن پیش‌نویس؛ فقط روی گوشی ذخیره می‌شود"></textarea></label>
+          <div class="checks">
+            <label><input type="checkbox" class="platform" value="linkedin" checked> LinkedIn</label>
+            <label><input type="checkbox" class="platform" value="instagram"> Instagram</label>
+            <label><input type="checkbox" class="platform" value="facebook"> Facebook</label>
+            <label><input type="checkbox" class="platform" value="x"> X</label>
+          </div>
+          <label>زمان پیشنهادی انتشار (شمسی)<div class="jalali-datetime"><div class="jalali-control"><div class="jalali-input-row"><input id="postSchedule" class="jalali-input ltr" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="۱۴۰۵/۰۶/۰۹" aria-describedby="postScheduleHelp postScheduleError" oninput="handleJalaliInput(this)" onblur="handleJalaliBlur(this)" onkeydown="jalaliFieldKeydown(event,'postSchedule')"><button class="date-picker-trigger" type="button" aria-label="انتخاب تاریخ شمسی" onclick="openJalaliPicker('postSchedule')">انتخاب</button></div><small id="postScheduleHelp">تایپ با درج خودکار / یا انتخاب از تقویم</small><small id="postScheduleError" class="field-error" aria-live="polite"></small></div><input id="postScheduleTime" class="time-input" type="time" value="09:00" aria-label="ساعت پیشنهادی انتشار"></div></label>
+          <button class="btn primary wide" onclick="createPost()">ذخیره آفلاین</button>
+        </div>
+        <div class="panel"><div class="panel-head"><h3>پیش‌نویس‌های ذخیره‌شده</h3><button class="link" onclick="loadPosts()">تازه‌سازی</button></div><div id="postList"></div></div>
+      </div>
+    </section>
+
+    <section id="automation" class="page hidden">
+      <div class="status-grid">
+        <div class="panel"><h3>تحلیل محلی</h3><p id="aiStatus" class="muted"></p></div>
+        <div class="panel"><h3>حالت آفلاین</h3><p id="n8nStatus" class="muted"></p></div>
+      </div>
+      <div class="panel"><div class="panel-head"><h3>دفتر رویدادهای محلی</h3><button class="btn" onclick="loadEvents()">تازه‌سازی</button></div><div id="eventList"></div></div>
+    </section>
+
+    <section id="settings" class="page hidden">
+      <div class="settings-grid">
+        <div class="panel"><h3>پشتیبان‌گیری کامل</h3><p class="muted">Backup شامل شرکت‌ها، افراد، پروژه‌ها، شبکه کاری، تقویم و جلسات، دفتر طلب/بدهی، مدارک، فاکتورها و فایل‌ها، تماس‌ها، یادداشت‌ها، پیگیری‌ها و پیش‌نویس‌ها است.</p><div class="actions"><button class="btn primary" onclick="downloadFile('backup')">⬇ تهیه فایل پشتیبان کامل</button><button class="btn" onclick="openBackupImport()">⬆ بازیابی از فایل پشتیبان</button></div></div>
+        <div class="panel"><h3>CSV</h3><p class="muted">برای Excel یا انتقال گروهی می‌توانی شرکت‌ها و افراد را جداگانه Export/Import کنی.</p><div class="actions"><button class="btn" onclick="downloadFile('organizations')">CSV شرکت‌ها</button><button class="btn" onclick="downloadFile('contacts')">CSV افراد</button><button class="btn" onclick="openOrganizationImport()">ورود شرکت‌ها</button><button class="btn" onclick="openImport()">ورود افراد</button></div></div>
+        <div class="panel caller-panel">
+          <div class="panel-head"><h3>Caller ID کاملاً آفلاین</h3><span id="callerIdBadge" class="badge">در حال بررسی…</span></div>
+          <p class="muted">شماره تماس ورودی با اطلاعات ذخیره‌شده در همین گوشی تطبیق داده می‌شود. وضعیت واقعی سرویس و مجوزها را اینجا می‌بینی.</p>
+          <label class="switch-row"><span><b>Caller ID روشن باشد</b><small>فقط شماره‌هایی که در CRM ثبت و تأیید شده‌اند شناسایی می‌شوند؛ مخاطبین عادی گوشی نادیده گرفته می‌شوند.</small></span><input id="callerIdEnabledSetting" type="checkbox" onchange="setCallerIdEnabled(this.checked)"></label>
+          <div id="callerIdDiagnostics" class="caller-diagnostics"></div>
+          <div class="phonebook-link-box">
+            <label class="switch-row"><span><b>نمایش مشتری CRM در مخاطبین گوشی</b><small>پرونده‌های ثبت‌شده در CRM با نام و شماره داخل Contacts اندروید ساخته می‌شوند؛ باز کردن لینک CRM از همان مخاطب، پرونده را باز می‌کند.</small></span><input id="phonebookLinkSetting" type="checkbox" onchange="setPhonebookLinkEnabled(this.checked)"></label>
+            <label class="switch-row"><span><b>ساخت مخاطبین جدید</b><small>اگر شماره در مخاطبین گوشی نیست، یک مخاطب مدیریت‌شده با برچسب CRM-NIKARA بساز.</small></span><input id="phonebookCreateMissingSetting" type="checkbox" onchange="setPhonebookLinkEnabled($('#phonebookLinkSetting')?.checked||false,this.checked)"></label>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="enableCallerId()">📞 فعال‌سازی / بررسی Caller ID</button>
+            <button class="btn" id="overlaySettingsBtn" onclick="openCallerOverlaySettings()">🪟 اجازه نمایش روی صفحه زنگ</button>
+            <button class="btn" onclick="openCallerSimulation()">📞 شبیه‌سازی تماس از یک مشتری واقعی</button>
+            <button class="btn" onclick="testCallerIdPopup()">🧪 تست نمایش Caller ID</button>
+            <button class="btn" onclick="importDeviceContacts()">👥 ورود دفترچه تلفن گوشی</button>
+            <button class="btn danger" onclick="cleanupPhonebookContacts()">🧹 پاکسازی مخاطبین بی‌سابقه دفترچه تلفن</button>
+            <button class="btn" onclick="openCallerNotificationSettings()">🔔 تنظیمات اعلان Caller ID</button>
+            <button class="btn" id="fullScreenSettingsBtn" onclick="openCallerFullScreenSettings()">▣ اجازه نمایش روی صفحه تماس</button>
+            <button class="btn" onclick="loadCallerIdStatus()">↻ تازه‌سازی وضعیت</button>
+          </div>
+          <p class="muted mini-note">برای باز شدن مطمئن پرونده هنگام زنگ: نقش Caller ID، مجوز Contacts، «نمایش روی برنامه‌ها» و اعلان‌ها همه سبز باشند. بعد از یک تماس واقعی، «تعداد تماس‌های دریافت‌شده توسط سرویس» باید زیاد شود؛ اگر زیاد نشود Android سرویس را صدا نزده است (در Samsung: تنظیمات تماس ← Caller ID and spam protection).</p>
+        </div>
+        <div class="panel"><h3>مهاجرت از نسخه قبلی</h3><p class="muted">در Backup قدیمی، فیلد company به‌طور خودکار به «پرونده شرکت» تبدیل می‌شود. تمام افرادی که نام شرکت یکسان دارند زیر همان شرکت قرار می‌گیرند.</p><button class="btn" onclick="openBackupImport()">انتخاب Backup قبلی</button></div>
+        <div class="panel"><h3>حریم خصوصی</h3><p class="muted">هیچ Server URL، Cloudflare، VPS یا حساب آنلاین لازم نیست. حذف App Data یا Uninstall اطلاعات داخل اپ را پاک می‌کند؛ Backup را در Files گوشی نگه دار.</p><button class="btn danger" onclick="resetOfflineData()">پاک‌کردن اطلاعات محلی</button></div>
+        <div class="panel"><h3>فرمت شماره تلفن</h3><p class="muted">موبایل را با ۰۹ (مثل ۰۹۱۲۳۴۵۶۷۸۹)، ثابت را با کد شهر (مثل ۰۲۱۸۸۷۷۶۶۵۵) و شماره خارجی را با + و کد کشور وارد کن. اگر ثابت را ۸ رقمی و بدون کد بنویسی، این کد شهر اضافه می‌شود:</p><label>کد شهر پیش‌فرض<input id="defaultAreaCodeSetting" class="ltr" inputmode="numeric" maxlength="3" placeholder="021" onchange="setDefaultAreaCode(this.value)"></label></div>
+        <div class="panel"><h3>تقویم و یادآوری</h3><p class="muted">تقویم برنامه شمسی و منطقه زمانی تهران است. Reminderهای مستقل، جلسه‌ها و پیگیری‌ها از کانال اختصاصی Android زمان‌بندی می‌شوند. برای اجرای دقیق در Samsung/Android، علاوه بر Notifications دسترسی Alarms & reminders هم فعال باشد.</p><div class="two-col"><label>واحد نمایش مالی<select id="moneyUnitSetting" onchange="setMoneyUnit(this.value)"><option value="IRT">تومان</option><option value="IRR">ریال</option></select></label><label>تقویم<input value="هجری شمسی (Persian)" disabled></label></div><div id="reminderDiagnostics" class="caller-diagnostics"></div><div class="actions"><button class="btn primary" onclick="enableMobileReminders()">🔔 فعال‌سازی یادآوری دقیق</button><button class="btn" onclick="openReminder()">+ یادآوری مستقل</button><button class="btn" onclick="refreshReminderStatus()">↻ بررسی وضعیت یادآوری</button></div></div>
+        <div class="panel"><h3>ظاهر و خوانایی</h3><p class="muted">رنگ، اندازه نوشته و کنتراست را متناسب با صفحه و دید خود تنظیم کن؛ انتخاب‌ها روی همین دستگاه ذخیره می‌شوند.</p><div class="preference-row"><span>حالت رنگ</span><div class="segmented"><button class="btn" data-theme-choice="system" onclick="setTheme('system')">سیستم</button><button class="btn" data-theme-choice="light" onclick="setTheme('light')">روشن</button><button class="btn" data-theme-choice="dark" onclick="setTheme('dark')">تیره</button></div></div><div class="preference-row"><span>اندازه نوشته</span><div class="segmented"><button class="btn" data-text-size-choice="normal" onclick="setTextSize('normal')">معمولی</button><button class="btn" data-text-size-choice="large" onclick="setTextSize('large')">درشت</button></div></div><label class="switch-row"><span><b>کنتراست بیشتر</b><small>متن‌های توضیحی و مرز کنترل‌ها واضح‌تر نمایش داده شوند.</small></span><input id="highContrastSetting" type="checkbox" onchange="setHighContrast(this.checked)"></label></div>
+        <div class="panel product-about"><div class="about-brand"><span class="brand-mark">N</span><div><h3>CRM-NIKARA</h3><p class="muted">نسخه 1.4.0 حرفه‌ای و آفلاین</p></div></div><div class="about-list"><div><span>Developer</span><b>H.Shirvani</b></div><div><span>حالت داده</span><b>Offline-first</b></div><div><span>Analytics / Ads</span><b>ندارد</b></div></div><button class="btn" onclick="showOnboarding(true)">راهنمای شروع و دسترسی‌ها</button><button id="installBtn" class="btn hidden">نصب PWA</button></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="ناوبری اصلی">
+    <button data-tab="dashboard" class="active" aria-label="خانه"><span class="nav-icon">⌂</span><small>خانه</small></button>
+    <button data-tab="organizations" aria-label="شرکت‌ها"><span class="nav-icon">▣</span><small>شرکت‌ها</small></button>
+    <button class="add" onclick="openQuickAdd()" aria-label="افزودن مشتری">+</button>
+    <button data-tab="contacts" aria-label="افراد"><span class="nav-icon">☷</span><small>افراد</small></button>
+    <button id="mobileMoreButton" onclick="openMobileMore()" aria-label="بیشتر"><span class="nav-icon more-dots">•••</span><small>بیشتر</small></button>
+  </nav>
+</div>
+
+<div id="confirmLayer" class="confirm-layer hidden" onclick="resolveConfirm(false)"><div class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" onclick="event.stopPropagation()"><span class="confirm-icon">⚠</span><b id="confirmTitle"></b><p id="confirmBody" class="muted"></p><div class="confirm-actions"><button class="btn" type="button" id="confirmCancelBtn" onclick="resolveConfirm(false)">انصراف</button><button class="btn danger" type="button" id="confirmOkBtn" onclick="resolveConfirm(true)">تأیید</button></div></div></div>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1" onclick="modalBackdrop(event)" onkeydown="trapModalFocus(event)"><div class="sheet"><div class="sheet-head"><b id="modalTitle"></b><button class="icon-btn" type="button" aria-label="بستن پنجره" onclick="closeModal()">×</button></div><div id="modalBody"></div></div></div>
+<div id="datePickerLayer" class="date-picker-layer hidden" onclick="datePickerBackdrop(event)"><div id="datePickerDialog" class="date-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="datePickerTitle" onkeydown="trapDatePickerFocus(event)"><div id="datePickerContent"></div></div></div>
+<div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+<script src="/native-bridge.js"></script>
+<script src="/offline-store.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

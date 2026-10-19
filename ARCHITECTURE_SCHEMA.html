@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRM-NIKARA v1.1.4 — شماتیک معماری</title>
+<style>
+:root{
+  --bg:#0B1220; --panel:#101a2e; --panel2:#0e1626; --line:#24344f; --line2:#2e4265;
+  --text:#E8EEF9; --muted:#93a4c3; --dim:#5f7398;
+  --accent:#39d0c4; --accent2:#5aa9ff; --warn:#f4b74d; --bad:#f0716b; --ok:#68d391;
+  --chip:#16233c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Vazirmatn","Segoe UI",Tahoma,sans-serif;line-height:1.7;padding:28px 18px 60px}
+.wrap{max-width:1280px;margin:0 auto}
+header.page{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(135deg,#101a2e,#0c1425);margin-bottom:22px}
+.badge{font-size:12px;border:1px solid var(--line2);border-radius:999px;padding:3px 12px;color:var(--accent);white-space:nowrap}
+h1{font-size:22px;margin:0}
+.sub{color:var(--muted);font-size:13px}
+h2.sec{font-size:16px;margin:34px 0 14px;padding:8px 14px;border-inline-start:4px solid var(--accent);background:var(--panel2);border-radius:8px}
+h2.sec small{color:var(--muted);font-weight:normal;font-size:12px;margin-inline-start:10px}
+
+.stack{display:flex;flex-direction:column;gap:0}
+.layer{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px 16px}
+.layer-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:10px}
+.lnum{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:bold;background:#1b2c4a;color:var(--accent);flex:none}
+.layer h3{margin:0;font-size:15px}
+.layer .path{color:var(--dim);font-size:11.5px;font-family:Consolas,monospace;direction:ltr}
+.layer .note{color:var(--muted);font-size:12.5px;margin:2px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:12px;color:var(--text)}
+.chip small{color:var(--dim);font-size:10.5px}
+.chip.hl{border-color:var(--accent);color:var(--accent)}
+.chip.blue{border-color:var(--line2);color:var(--accent2)}
+.chip.warn{border-color:var(--warn);color:var(--warn)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.card b{font-size:13px;display:block;margin-bottom:4px}
+.card p{margin:0;font-size:12px;color:var(--muted)}
+.arrow-down{text-align:center;color:var(--accent);font-size:20px;line-height:1.15;padding:4px 0}
+.arrow-down small{display:block;font-size:10.5px;color:var(--dim)}
+.code{font-family:Consolas,monospace;direction:ltr;display:inline-block}
+
+.seq{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;counter-reset:step}
+.step{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.step .n{position:absolute;top:-11px;inset-inline-start:12px;background:var(--accent);color:#06121f;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold}
+.step p{margin:0;font-size:12px;color:var(--muted)}
+.step b{font-size:13px;display:block;margin-bottom:3px}
+
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px}
+th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line)}
+th{background:var(--panel2);color:var(--accent);font-size:12px}
+tr:last-child td{border-bottom:none}
+td.ltr{direction:ltr;font-family:Consolas,monospace;color:var(--muted)}
+
+.dmodel{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dbox{border:1px solid var(--line2);border-radius:12px;background:var(--panel);padding:12px 14px}
+.dbox h4{margin:0 0 8px;font-size:13.5px;color:var(--accent2)}
+.dbox .row{display:flex;flex-wrap:wrap;gap:6px}
+.rels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.rel{background:var(--panel2);border:1px dashed var(--line2);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--muted)}
+.rel b{color:var(--text)}
+
+.pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:0}
+.pnode{flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center}
+.pnode b{display:block;font-size:12.5px;margin-bottom:2px}
+.pnode span{font-size:10.5px;color:var(--dim);font-family:Consolas,monospace;direction:ltr;display:block}
+.parrow{display:flex;align-items:center;padding:0 6px;color:var(--accent);font-size:18px}
+
+footer{margin-top:36px;color:var(--dim);font-size:11.5px;text-align:center}
+@media(max-width:900px){.grid2,.grid3,.dmodel,.rels{grid-template-columns:1fr}.seq{grid-template-columns:1fr 1fr}.pipe{flex-direction:column}.parrow{transform:rotate(90deg);justify-content:center}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="page">
+  <div>
+    <h1>CRM-NIKARA — شماتیک معماری</h1>
+    <div class="sub">CRM آفلاین (Offline-first) برای Android/PWA · بدون سرور، VPS یا Cloudflare · توسعه: H.Shirvani</div>
+  </div>
+  <span class="badge">v1.1.4 UX &amp; Data Quality</span>
+  <span class="badge">versionCode 10104</span>
+  <span class="badge">applicationId: com.aicrm.offline</span>
+  <span class="badge">Persian / RTL / تقویم شمسی</span>
+</header>
+
+<!-- ============ STACK ============ -->
+<h2 class="sec">۱) لایه‌های اصلی از رابط کاربری تا اندروید <small>هر لایه فقط با لایه پایین‌تر صحبت می‌کند؛ داده فقط روی همین دستگاه است</small></h2>
+
+<div class="stack">
+
+  <div class="layer">
+    <div class="layer-head">
+      <div class="lnum">۱</div>
+      <h3>رابط کاربری PWA (تک‌صفحه، RTL)</h3>
+      <span class="path">frontend/index.html + style.css + sw.js + manifest.webmanifest + fonts/*</span>
+    </div>
+    <div class="note">۱۲ صفحه (تب) اصلی + نوار پاورقی موبایل + Onboarding + تم روشن/تیره/سیستم، متن درشت، کنتراست بالا، فونت آفلاین</div>
+    <div class="chips">
+      <span class="chip">⌂ داشبورد</span><span class="chip">▣ شرکت‌ها</span><span class="chip">☷ افراد</span>
+      <span class="chip">◆ پروژه‌ها / فرصت‌ها</span><span class="chip">▦ تقویم شمسی</span><span class="chip">⌘ شبکه کاری</span>
+      <span class="chip">﷼ حساب مشتریان</span><span class="chip">▤ مدارک</span><span class="chip">✓ پیگیری‌ها</span>
+      <span class="chip">✦ پیش‌نویس‌ها</span><span class="chip">☰ رویدادهای محلی</span><span class="chip">⚙ تنظیمات</span>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼<small>رندر، رویداد و فراخوانی توابع سطح بالا</small></div>
+
+  <div class="layer">
+    <div class="layer-head">
+      <div class="lnum">۲</div>
+      <h3>منطق برنامه و رابط‌سازی بومی</h3>
+      <span class="path">frontend/app.js (≈۱۶۶KB)</span>
+    </div>
+    <div class="grid3">
+      <div class="card"><b>تقویم شمسی / تهران</b><p>درج خودکار اسلش، پیمایش کیبورد، انتخاب ماه، ذخیره ISO + نمایش <span class="code">fa-IR-u-ca-persian</span></p></div>
+      <div class="card"><b>موتور مالی محلی</b><p>مانده طلب/بدهی، پرداخت جزئی، تخصیص به فاکتور، Aging، واحد تومان/ریال</p></div>
+      <div class="card"><b>همگام‌سازی Caller ID</b><p><span class="code">syncCallerIdContacts()</span> بعد از هر ذخیره → کش Native (فیلتر یک: <span class="code">caller_id=true</span>)</p></div>
+      <div class="card"><b>یادآوری و اعلان</b><p>زمان‌بندی فوری <span class="code">LocalNotifications.schedule</span>، کانال اختصاصی، <span class="code">allowWhileIdle</span>، بازهمگام‌سازی در شروع/بازگشت</p></div>
+      <div class="card"><b>Backup / Restore</b><p>JSON کامل با نشانگر <span class="code">CRM-NIKARA-BACKUP</span> + مهاجرت خودکار از نسخه‌های قدیمی (فیلد company → شرکت)</p></div>
+      <div class="card"><b>CSV و واردات</b><p>Import/Export جداگانه شرکت‌ها و افراد؛ ورود دفترچه تلفن گوشی از طریق پلاگین Native</p></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼<small>فقط با API شبیه‌REST محلی: <span class="code">OfflineDB.api('/api/...')</span></small></div>
+
+  <div class="layer">
+    <div class="layer-head">
+      <div class="lnum">۳</div>
+      <h3>لایه داده آفلاین + دیتابیس IndexedDB</h3>
+      <span class="path">frontend/offline-store.js (≈۱۰۳KB) → window.OfflineDB</span>
+    </div>
+    <div class="note">روتر محلی مسیرهای <span class="code">/api/*</span> — همان قرارداد یک API بک‌اند، ولی کاملاً داخل مرورگر/WebView</div>
+    <div class="grid2">
+      <div class="card"><b>مسیرهای API محلی</b>
+        <p class="code" style="direction:ltr;text-align:left">/api/config · /api/dashboard · /api/network · /api/organizations · /api/contacts · /api/projects · /api/meetings · /api/reminders · /api/finance · /api/finance/summary · /api/document-checks · /api/tasks · /api/social-posts · /api/events · /api/import/*.csv · /api/ai/business-card (غیرفعال)</p>
+      </div>
+      <div class="card"><b>نرمال‌سازی و قوانین داده</b>
+        <p>نرمال‌سازی شماره ایران <span class="code">+98</span> · پرچم <span class="code">caller_id</span>: منابع <span class="code">device-contacts</span> / <span class="code">caller-id-cache</span> پیش‌فرض خاموش ·UUID و زمان ISO</p>
+      </div>
+    </div>
+    <div class="note" style="margin-top:10px"><b style="color:var(--accent)">IndexedDB</b> — نام پایدار برای آپدیت بدون از دست رفتن داده: <span class="code">ai-crm-offline-v3</span> (نسخه دیتابیس ۱۰) · ۱۴ Object Store:</div>
+    <div class="chips">
+      <span class="chip hl">organizations</span><span class="chip hl">contacts</span><span class="chip hl">projects</span>
+      <span class="chip">project_participants</span><span class="chip">interactions</span><span class="chip">attachments</span>
+      <span class="chip">organization_links</span><span class="chip">tasks</span><span class="chip">meetings</span>
+      <span class="chip">reminders</span><span class="chip">finance_entries</span><span class="chip">document_checks</span>
+      <span class="chip">posts</span><span class="chip">events</span>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼<small>پل بین JS و Native: <span class="code">window.NativeBridge</span></small></div>
+
+  <div class="layer">
+    <div class="layer-head">
+      <div class="lnum">۴</div>
+      <h3>پل بومی (Bridge)</h3>
+      <span class="path">frontend/native-bridge.js (وب) ← mobile/src/native-entry.js → esbuild → mobile/www/native-bridge.js (اندروید)</span>
+    </div>
+    <div class="chips">
+      <span class="chip blue">isNative (در وب: false)</span>
+      <span class="chip blue">App — @capacitor/app</span>
+      <span class="chip blue">LocalNotifications — اعلان و زمان‌بندی</span>
+      <span class="chip blue">CallerId — پلاگین اختصاصی</span>
+      <span class="chip blue">AttachmentViewer — پلاگین اختصاصی</span>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼<small>Capacitor 8.5 · webDir: www · Android sandbox</small></div>
+
+  <div class="layer">
+    <div class="layer-head">
+      <div class="lnum">۵</div>
+      <h3>لایه Native اندروید</h3>
+      <span class="path">mobile/native-caller-id/*.java + mobile/scripts/install-caller-id.mjs</span>
+    </div>
+    <div class="grid2">
+      <div class="card"><b>CallerIdPlugin (پلاگین Capacitor)</b>
+        <p>روش‌ها: <span class="code">syncContacts · getCachedContacts · getStatus · requestRole · requestContactsPermission · importDeviceContacts · setEnabled · testCallerIdPopup · getLastIncomingCall · consumePendingOpen · openNotificationSettings / openFullScreenIntentSettings</span><br>
+        وضعیت در <span class="code">SharedPreferences "crm_caller_id"</span>: کش مخاطبین، کلید روشن/خاموش، شمارنده تماس‌های اسکریَن‌شده، آخرین خطا</p>
+      </div>
+      <div class="card"><b>CrmCallScreeningService (CallScreeningService)</b>
+        <p>سرویس با <span class="code">BIND_SCREENING_SERVICE</span> برای نقش <span class="code">ROLE_CALL_SCREENING</span>. روی تماس ورودی: (۱) فوراً اجازه تماس — هرگز زنگ را تعلیق نمی‌کند؛ (۲) جستجوی محلی در کش با فیلتر دوم <span class="code">isCrmRegistered()</span>؛ (۳) فقط در صورت تطابق: اعلان پرکار + باز شدن Activity؛ (۴) ثبت آخرین تماس برای دیباگ</p>
+      </div>
+      <div class="card"><b>CallerIdActivity (صفحه کامل هنگام تماس)</b>
+        <p><span class="code">showWhenLocked + turnScreenOn</span>، RTL فارسی: خلاصه CRM (مرحله، ارزش، اقدام بعدی)، حساب شخص + حساب شرکت، جلسه بعدی، مدارک ناقص/نزدیک انقضا، پروژه‌ها، پیگیری‌های باز، سوابق؛ دکمه «باز کردن پرونده داخل CRM» → ذخیره <span class="code">pending_open</span> → MainActivity</p>
+      </div>
+      <div class="card"><b>AttachmentViewerPlugin + LocalNotifications</b>
+        <p>دیتاآدرس پیوست → فایل در کش → <span class="code">FileProvider (${applicationId}.fileprovider)</span> → <span class="code">ACTION_VIEW</span> با تشخیص MIME از پسوند (PDF/Excel/CSV). اعلان‌ها روی کانال اختصاصی با دسترسی Alarms &amp; reminders برای زمان‌بندی دقیق</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ CALLER ID FLOW ============ -->
+<h2 class="sec">۲) جریان کامل Caller ID آفلاین <small>باگ اصلی v1.1.3: فقط شماره‌های ثبت‌شده و تأییدشده در CRM، پرونده باز می‌کنند — نه همه مخاطبین گوشی</small></h2>
+
+<div class="seq">
+  <div class="step"><span class="n">۱</span><b>ذخیره در CRM</b><p>هر بار که شخص/شرکت ساخته، ویرایش یا تأیید می‌شود → <span class="code">syncCallerIdContacts()</span> اجرا می‌شود.</p></div>
+  <div class="step"><span class="n">۲</span><b>فیلتر یک (JS)</b><p>فقط رکوردی که پرچم <span class="code">caller_id=true</span> دارد ارسال می‌شود؛ مخاطبین واردشده از دفترچه تلفن پیش‌فرض خاموش هستند و باید در ویرایش شخص تأیید شوند.</p></div>
+  <div class="step"><span class="n">۳</span><b>فیلتر دوم (Native)</b><p><span class="code">isCrmRegistered()</span> داخل پلاگین صرف‌نظر از ورودی JS، رکوردهای بد/نامعتبر را حذف می‌کند → <span class="code">SharedPreferences</span>.</p></div>
+  <div class="step"><span class="n">۴</span><b>تماس ورودی</b><p>اندروید تماس را به <span class="code">CrmCallScreeningService</span> می‌رساند (اگر کاربر نقش Caller ID را داده باشد). شمارنده تماس‌های اسکریَن‌شده +۱ می‌شود.</p></div>
+  <div class="step"><span class="n">۵</span><b>اجازه فوری</b><p><span class="code">respondToCall(disallow=false)</span> — جستجو هیچ‌وقت زنگ را به تأخیر نمی‌اندازد؛ اول تماس، بعد شناسایی.</p></div>
+  <div class="step"><span class="n">۶</span><b>تطبیق سخت‌گیرانه</b><p>نرمال‌سازی <span class="code">+98</span> و تطبیق دقیق؛ پشتیبان (fallback) ۱۰ رقم آخر فقط برای شماره‌های کامل (۱۰ تا ۱۴ رقم). شماره خالی/ناقص هرگز نمی‌چسبد.</p></div>
+  <div class="step"><span class="n">۷</span><b>تطابق یافت → نمایش</b><p>اعلان درجه بالا (کانال crm_caller_id) + <span class="code">CallerIdActivity</span> تمام‌صفحه روی صفحه تماس: پرونده مشتری + حساب شرکت + مدارک و پیگیری‌ها.</p></div>
+  <div class="step"><span class="n">۸</span><b>تطابق نیفتاد → سکوت</b><p>هیچ overlay و اعلان اضافی؛ فقط آخرین تماس در SharedPreferences برای تشخیص (تعداد تماس‌های دریافت‌شده در تنظیمات باید رشد کند).</p></div>
+</div>
+
+<table style="margin-top:14px">
+<tr><th style="width:22%">ابهزار</th><th>وضعیت</th></tr>
+<tr><td>کلید کلی Caller ID</td><td>در تنظیمات CRM؛ ذخیره در Native (SharedPreferences) و خوانده‌شدن در سرویس</td></tr>
+<tr><td>نقش Call Screening</td><td><span class="code">RoleManager.requestRole(ROLE_CALL_SCREENING)</span> — Android 10 به بالا</td></tr>
+<tr><td>مجوزها</td><td><span class="code">READ_CONTACTS</span> (دریافت دفترچه) · <span class="code">POST_NOTIFICATIONS</span> · <span class="code">USE_FULL_SCREEN_INTENT</span> · <span class="code">SCHEDULE_EXACT_ALARM</span> · <span class="code">RECORD_AUDIO</span></td></tr>
+<tr><td>پاکسازی دفترچه تلفن</td><td>دکمه «پاکسازی مخاطبین بی‌سابقه» با تأیید دومرحله‌ای → آرشیو (قابل برگشت)</td></tr>
+<tr><td>تست</td><td><span class="code">tests/caller-id-filter.contract.mjs</span> + دکمه «تست نمایش Caller ID» داخل تنظیمات</td></tr>
+</table>
+
+<!-- ============ DATA MODEL ============ -->
+<h2 class="sec">۳) مدل داده <small>سلسله‌مراتب اصلی و اشیاء مستقل؛ همه در همان ۱۴ Object Store</small></h2>
+
+<div class="dmodel">
+  <div class="dbox">
+    <h4>سلسله‌مراتب مشتری</h4>
+    <div class="row">
+      <span class="chip hl">Organization (شرکت/سازمان)</span>
+      <span class="chip hl">⇄ organization_links ⇄</span>
+      <span class="chip hl">Contact (فرد)</span>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="chip">primary_contact_id</span>
+      <span class="chip">caller_id (پرچم)</span>
+      <span class="chip">status: new→…→won/lost</span>
+      <span class="chip">deal_value / phones / national_id / economic_code</span>
+      <span class="chip">relationship_types (شبکه کاری)</span>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="chip blue">Project / Opportunity ← customer_organization_id · customer_contact_id</span>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="chip blue">project_participants ← role: حمل‌ونقل، ترخیص، تأمین‌کننده، پزشک، داروخانه، بیمه، مالی…</span>
+    </div>
+  </div>
+  <div class="dbox">
+    <h4>اشیاء وابسته به پرونده (interactions + attachments)</h4>
+    <div class="row">
+      <span class="chip">گزارش تماس</span><span class="chip">یادداشت متنی</span><span class="chip">Voice Note</span>
+      <span class="chip">project_note</span><span class="chip">Timeline مشتری/شرکت/پروژه</span>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="chip">Attachment: Image / PDF / Excel / CSV (dataURL) + viewer Native</span>
+    </div>
+  </div>
+  <div class="dbox">
+    <h4>برنامه‌ریزی (تقویم شمسی)</h4>
+    <div class="row">
+      <span class="chip">Task (پیگیری)</span>
+      <span class="chip">Meeting (جلسه: planned/done/cancelled)</span>
+      <span class="chip">Reminder (یادآوری مستقل از Task/Meeting)</span>
+    </div>
+    <p style="font-size:11.5px;color:var(--dim);margin:8px 0 0">هر سه روی کانال اختصاصی اندروید زمان‌بندی می‌شوند؛ یادآوری مستقل در لحظه ذخیره schedule می‌شود.</p>
+  </div>
+  <div class="dbox">
+    <h4>مالی + مدارک + سایر</h4>
+    <div class="row">
+      <span class="chip warn">finance_entries: sales_invoice · receipt · purchase_invoice · payment · adj. طلب · adj. بدهی</span>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="chip">مانده فاکتور · پرداخت جزئی · Aging</span>
+      <span class="chip">document_checks: required/received/verified/rejected (+expired) + فایل ضمیمه</span>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="chip">posts (پیش‌نویس محتوا)</span>
+      <span class="chip">events (دفتر رویدادهای محلی)</span>
+    </div>
+  </div>
+</div>
+
+<div class="rels">
+  <div class="rel"><b>Organization → Contacts</b><br>چند فرد زیر هر شرکت + پیوندهای many-to-many با organization_links</div>
+  <div class="rel"><b>Organization/Contact → Projects</b><br>پرونده مشتری/شخص به‌عنوان طرف پروژه؛ value, probability, stage, dates</div>
+  <div class="rel"><b>Project → participants/finance/docs</b><br>اسناد، فاکتورها و پیگیری‌ها «زیر همان پرونده» نگهداری می‌شوند</div>
+</div>
+
+<!-- ============ PIPELINE ============ -->
+<h2 class="sec">۴) خط تولید و CI <small>فرآیند تبدیل frontend/ به APK</small></h2>
+
+<div class="pipe">
+  <div class="pnode"><b>frontend/ (منبع)</b><span>index.html · app.js · offline-store.js · sw.js</span></div>
+  <div class="parrow">←</div>
+  <div class="pnode"><b>sync-web.mjs</b><span>npm run sync:web → mobile/www</span></div>
+  <div class="parrow">←</div>
+  <div class="pnode"><b>bundle:native (esbuild)</b><span>native-entry.js → www/native-bridge.js</span></div>
+  <div class="parrow">←</div>
+  <div class="pnode"><b>cap sync android</b><span>webDir: www → اندروید</span></div>
+  <div class="parrow">←</div>
+  <div class="pnode"><b>install-caller-id.mjs</b><span>کپی ۴ Java + MainActivity + AndroidManifest (مجوزها، سرویس، FileProvider) + versionCode 10104</span></div>
+  <div class="parrow">←</div>
+  <div class="pnode"><b>gradlew</b><span>assembleDebug / assembleRelease (keystore در GitHub Secrets)</span></div>
+  <div class="parrow">←</div>
+  <div class="pnode" style="border-color:var(--accent)"><b>APK</b><span>نصب روی نسخه فعلی بدون حذف دیتابیس</span></div>
+</div>
+
+<table style="margin-top:14px">
+<tr><th style="width:34%">فرمان / Workflow</th><th>نقش</th></tr>
+<tr><td class="ltr">npm run android:build (داخل mobile/)</td><td>ساخت کامل: sync → cap → install-caller-id → assembleDebug</td></tr>
+<tr><td>GitHub Actions: «Build CRM-NIKARA Android»</td><td>APK دیباگ برای تست دستگاه</td></tr>
+<tr><td>GitHub Actions: «Release CRM-NIKARA Android»</td><td>نسخه امضاشده با keystore خصوصی برای انتشار</td></tr>
+<tr><td>CI (ci.yml)</td><td><span class="code">node --check</span> برای ۷ فایل · ۸ تست contract + <span class="code">caller-id-filter</span> · <span class="code">offline-store.integration</span> · assertهای محصول · <span class="code">cmp</span> برای اطمینان از تطبیق کامل bundle</td></tr>
+</table>
+
+<footer>تولیدشده از بررسی کد CRM-NIKARA v1.1.4 — D:\CRM-NIKARA-v1.1.3-CALLERID-FIX · استفاده برای جلسه دستور/فرمان‌رسانی</footer>
+</div>
+</body>
+</html>

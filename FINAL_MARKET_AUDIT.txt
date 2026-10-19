@@ -1,0 +1,104 @@
+CRM-NIKARA 1.1.2 — FINAL MARKET AUDIT
+==========================================
+
+Product: CRM-NIKARA
+Developer: H.Shirvani
+Release: 1.1.2 Professional Final
+Status: APPROVED FOR GITHUB BUILD + FINAL PHYSICAL SAMSUNG ACCEPTANCE
+
+AUDITED AREAS
+-------------
+1. Product / Brand
+   PASS - CRM-NIKARA name and H.Shirvani developer identity.
+   PASS - User-visible version aligned to 1.1.2.
+   PASS - Android applicationId intentionally unchanged for in-place update/data retention.
+
+2. Persian localization
+   PASS - Persian/Jalali date contract.
+   PASS - Tehran timezone conversion.
+   PASS - No raw Gregorian date/datetime input remains in HTML contract.
+   PASS - Eight-digit input gains Persian date separators automatically.
+   PASS - Accessible Jalali picker supports month navigation, today, clear and keyboard movement.
+   PASS - Persian calendar integrates meetings, tasks, finance due dates and document expiry.
+
+3. Meetings / Reminders
+   PASS - Independent meeting object with start/end validation.
+   PASS - Android notification permission flow.
+   PASS - SCHEDULE_EXACT_ALARM installer permission.
+   PASS - Exact-alarm settings status / handoff.
+   PASS - allowWhileIdle scheduling.
+   PASS - Exactly one notification action listener.
+   PASS - Meeting notification navigation is handled before project/contact fallback.
+   PASS - Next 100 future tasks + next 100 future meetings are scheduled without a 90-day horizon cut-off.
+
+4. Finance / Receivables / Payables
+   PASS - Sales receivable / receipt allocation.
+   PASS - Purchase payable / payment allocation.
+   PASS - Partial settlement and over-allocation blocking.
+   PASS - Project consistency for allocated transactions.
+   PASS - Advance/unallocated receipt/payment classification.
+   PASS - Aging buckets and Tehran-date due comparisons.
+   PASS - Finance remains an operational CRM ledger, not statutory double-entry accounting.
+
+5. Document checklist + Attachments
+   PASS - Required / received / verified / rejected / expired workflow.
+   PASS - File replacement on document edit.
+   PASS - Old file cleanup and stale attachment-reference cleanup.
+   PASS - Image / PDF / Excel / CSV offline storage and backup.
+   PASS - Android AttachmentViewer registered + FileProvider generated.
+   PASS - MIME inference fallback from file extension.
+
+6. Core CRM model
+   PASS - Organization -> multiple People.
+   PASS - Projects / Opportunities.
+   PASS - Business Network / organization relations.
+   PASS - Tasks, timeline, voice notes, social drafts and event log.
+   PASS - JSON backup/restore and CSV import/export.
+
+7. Caller ID
+   PASS - CallScreeningService installer contract.
+   PASS - CallerIdPlugin and AttachmentViewerPlugin registration.
+   PASS - Known-contact rich caller profile cache.
+   PASS - Direct-person account + related-company account context.
+   PASS - Caller cache refresh after notes, calls, meetings, tasks and analysis changes.
+
+8. Mobile UI contract
+   PASS - 112 UI handlers; no undefined/dead action detected.
+   PASS - Five primary bottom-navigation buttons.
+   PASS - Safe-area top/bottom CSS contract.
+   PASS - Mobile modal height constraint.
+   PASS - No duplicate HTML IDs or blank unlabeled buttons.
+   PASS - Bundled offline UI font, large-text preference and high-contrast preference.
+   PASS - WCAG AA contrast baselines, visible keyboard focus and reduced-motion handling.
+
+9. CI / Packaging
+   PASS - JavaScript syntax checks.
+   PASS - JSON parse checks.
+   PASS - GitHub workflow structure and pinned-action checks.
+   PASS - Android installer runtime simulation, including a second idempotency pass.
+   PASS - Manifest permissions/services/provider checks.
+   PASS - versionCode 10103 / versionName 1.1.2 generation.
+   PASS - CI includes Android reminder, installer, mobile layout and accessibility contracts.
+
+AUTOMATED CONTRACT RESULTS
+--------------------------
+UI_CONTRACT_PASS handlers=112
+PERSIAN_DATE_CONTRACT_PASS
+REMINDER_SYSTEM_CONTRACT_PASS
+ANDROID_CONTRACT_PASS
+MOBILE_LAYOUT_CONTRACT_PASS
+ACCESSIBILITY_CONTRACT_PASS
+CRM_NIKARA_INTEGRATION_PASS
+ANDROID_INSTALLER_INTEGRATION_PASS
+
+KNOWN PLATFORM / RELEASE LIMITS
+-------------------------------
+- A physical Samsung call/reminder test is still the authoritative acceptance for Samsung-specific foreground/background behavior.
+- Android may bring Samsung Phone back to foreground after Answer; CRM-NIKARA keeps a notification path to reopen the full record during the active call.
+- Exported JSON backups are not cryptographically encrypted; store them securely.
+- Debug APK is for acceptance testing. Public distribution must use the signed Release APK/AAB with the same private keystore for future updates.
+
+FINAL GO/NO-GO
+--------------
+GO for repository update, CI/build and device acceptance.
+GO for public release only after the physical Samsung checklist passes and signed release artifacts are produced.

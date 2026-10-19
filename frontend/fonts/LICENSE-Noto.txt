@@ -1,0 +1,1 @@
+Nikara UI font = Noto Sans Arabic + Noto Sans (Google), SIL Open Font License 1.1.

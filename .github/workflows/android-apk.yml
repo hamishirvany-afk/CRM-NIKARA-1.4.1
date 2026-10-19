@@ -1,0 +1,73 @@
+name: Build CRM-NIKARA Android
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - 'frontend/**'
+      - '.github/workflows/android-apk.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+      - name: Audit CRM-NIKARA web UI
+        run: |
+          node tests/ui-contract.mjs
+          node tests/persian-date.contract.mjs
+          node tests/reminder-system.contract.mjs
+          node tests/offline-store.integration.mjs
+          node tests/android-contract.mjs
+          node tests/android-installer.integration.mjs
+          node tests/mobile-layout.contract.mjs
+          node tests/accessibility-contract.mjs
+          node tests/search-company.integration.mjs
+      - name: Generate Android project
+        working-directory: mobile
+        run: |
+          npm run prepare:web
+          npx cap add android
+          npx cap sync android
+          node scripts/install-caller-id.mjs
+      - name: Audit generated Android integration
+        working-directory: mobile
+        run: |
+          grep -q 'CrmCallScreeningService' android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.READ_CONTACTS' android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.POST_NOTIFICATIONS' android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.SCHEDULE_EXACT_ALARM' android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.USE_FULL_SCREEN_INTENT' android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.SYSTEM_ALERT_WINDOW' android/app/src/main/AndroidManifest.xml
+          test -f android/app/src/main/java/com/aicrm/offline/CallerIdOverlay.java
+          grep -Fq '${applicationId}.fileprovider' android/app/src/main/AndroidManifest.xml
+          grep -q 'registerPlugin(CallerIdPlugin.class)' android/app/src/main/java/com/aicrm/offline/MainActivity.java
+          grep -q 'registerPlugin(AttachmentViewerPlugin.class)' android/app/src/main/java/com/aicrm/offline/MainActivity.java
+          grep -q 'registerPlugin(InvoicePrintPlugin.class)' android/app/src/main/java/com/aicrm/offline/MainActivity.java
+          test -f android/app/src/main/java/android/print/NikaraPdfWriter.java
+          test -f android/app/src/main/res/xml/crm_file_paths.xml
+          test -f android/app/src/main/java/com/aicrm/offline/CallerIdActivity.java
+          test -f android/app/src/main/java/com/aicrm/offline/AttachmentViewerPlugin.java
+      - name: Build debug APK
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v7
+        with:
+          name: CRM-NIKARA-v1.4.0-FINAL-debug
+          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

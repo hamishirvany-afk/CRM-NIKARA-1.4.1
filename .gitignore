@@ -1,0 +1,13 @@
+.env
+.venv/
+data/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.db
+.DS_Store
+mobile/node_modules/
+mobile/android/
+mobile/ios/
+mobile/www/
+_runtime_check/

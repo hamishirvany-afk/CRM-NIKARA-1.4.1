@@ -1,0 +1,82 @@
+name: Release CRM-NIKARA Android
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Verify signing secrets
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KSPASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEYPASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          test -n "$KS" && test -n "$ALIAS" && test -n "$KSPASS" && test -n "$KEYPASS"
+      - name: Install dependencies
+        working-directory: mobile
+        run: npm install
+      - name: Generate Android project
+        working-directory: mobile
+        run: |
+          npm run prepare:web
+          npx cap add android
+          npx cap sync android
+          node scripts/install-caller-id.mjs
+      - name: Audit generated release project
+        run: |
+          node tests/ui-contract.mjs
+          node tests/persian-date.contract.mjs
+          node tests/reminder-system.contract.mjs
+          node tests/offline-store.integration.mjs
+          node tests/android-contract.mjs
+          node tests/android-installer.integration.mjs
+          node tests/mobile-layout.contract.mjs
+          node tests/accessibility-contract.mjs
+          grep -q 'CrmCallScreeningService' mobile/android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.SCHEDULE_EXACT_ALARM' mobile/android/app/src/main/AndroidManifest.xml
+          grep -Fq '${applicationId}.fileprovider' mobile/android/app/src/main/AndroidManifest.xml
+          grep -q 'registerPlugin(CallerIdPlugin.class)' mobile/android/app/src/main/java/com/aicrm/offline/MainActivity.java
+          grep -q 'registerPlugin(AttachmentViewerPlugin.class)' mobile/android/app/src/main/java/com/aicrm/offline/MainActivity.java
+          grep -q 'registerPlugin(InvoicePrintPlugin.class)' mobile/android/app/src/main/java/com/aicrm/offline/MainActivity.java
+          test -f mobile/android/app/src/main/java/android/print/NikaraPdfWriter.java
+      - name: Configure release signing
+        working-directory: mobile
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/nikara-upload.jks
+          node scripts/configure-release-signing.mjs
+      - name: Build signed APK and AAB
+        working-directory: mobile/android
+        env:
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease bundleRelease --no-daemon
+      - uses: actions/upload-artifact@v7
+        with:
+          name: CRM-NIKARA-v1.4.0-FINAL-RELEASE
+          path: |
+            mobile/android/app/build/outputs/apk/release/app-release.apk
+            mobile/android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error

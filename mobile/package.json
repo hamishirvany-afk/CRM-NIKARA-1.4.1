@@ -1,0 +1,29 @@
+{
+  "name": "crm-nikara-mobile",
+  "version": "1.4.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync:web": "node scripts/sync-web.mjs",
+    "cap:sync": "npm run prepare:web && npx cap sync",
+    "android:init": "npm run prepare:web && npx cap add android",
+    "android:open": "npm run cap:sync && npx cap open android",
+    "android:build": "npm run prepare:web && npx cap add android && npx cap sync android && node scripts/install-caller-id.mjs && cd android && ./gradlew assembleDebug",
+    "ios:init": "npm run prepare:web && npx cap add ios",
+    "ios:open": "npm run cap:sync && npx cap open ios",
+    "bundle:native": "esbuild src/native-entry.js --bundle --format=iife --platform=browser --outfile=www/native-bridge.js",
+    "prepare:web": "npm run sync:web && npm run bundle:native"
+  },
+  "dependencies": {
+    "@capacitor/core": "8.5.0",
+    "@capacitor/app": "8.1.1",
+    "@capacitor/local-notifications": "8.2.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.0",
+    "@capacitor/android": "8.5.0",
+    "@capacitor/ios": "8.5.0",
+    "esbuild": "0.25.9",
+    "typescript": "5.9.2"
+  }
+}

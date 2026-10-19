@@ -1,0 +1,22 @@
+CRM-NIKARA 1.1.2 FINAL
+Developer: H.Shirvani
+
+قبل از Update داخل اپ گوشی Backup JSON کامل بگیر.
+
+PowerShell:
+Set-ExecutionPolicy -Scope Process Bypass -Force
+Unblock-File "PATH\APPLY_CRM_NIKARA_1_1_1_FINAL.ps1"
+& "PATH\APPLY_CRM_NIKARA_1_1_1_FINAL.ps1"
+
+سپس:
+cd D:\AI-CRM-Suite-v2.0.0
+git add .
+git commit -m "Release CRM-NIKARA v1.1.2 Professional Final"
+git push
+
+GitHub:
+- CRM-NIKARA CI باید سبز شود.
+- Build CRM-NIKARA Android باید سبز شود.
+- Artifact: CRM-NIKARA-v1.1.2-FINAL-debug
+
+برای انتشار عمومی از Release CRM-NIKARA Android و keystore خصوصی استفاده کن.

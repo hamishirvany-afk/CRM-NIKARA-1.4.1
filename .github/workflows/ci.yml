@@ -1,0 +1,78 @@
+name: CRM-NIKARA CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Syntax checks
+        run: |
+          node --check frontend/app.js
+          node --check frontend/offline-store.js
+          node --check frontend/sw.js
+          node --check mobile/scripts/sync-web.mjs
+          node --check mobile/scripts/install-caller-id.mjs
+          node --check mobile/scripts/configure-release-signing.mjs
+          node --check mobile/src/native-entry.js
+      - name: Validate product files
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('mobile/package.json','utf8')); JSON.parse(require('fs').readFileSync('frontend/manifest.webmanifest','utf8'));"
+          node tests/ui-contract.mjs
+          node tests/persian-date.contract.mjs
+          node tests/reminder-system.contract.mjs
+          node tests/android-contract.mjs
+          node tests/android-installer.integration.mjs
+          node tests/mobile-layout.contract.mjs
+          node tests/accessibility-contract.mjs
+          node tests/caller-id-filter.contract.mjs
+          node tests/search-company.integration.mjs
+      - name: Offline data integration tests
+        run: node tests/offline-store.integration.mjs
+      - name: Product assertions
+        run: |
+          grep -q "CRM-NIKARA-BACKUP" frontend/offline-store.js
+          grep -q "CRM-NIKARA" frontend/index.html
+          grep -q "H.Shirvani" frontend/index.html
+          grep -q "organizations" frontend/offline-store.js
+          grep -q "projects" frontend/offline-store.js
+          grep -q "organization_links" frontend/offline-store.js
+          grep -q "attachments" frontend/offline-store.js
+          grep -q "meetings" frontend/offline-store.js
+          grep -q "reminders" frontend/offline-store.js
+          grep -q "finance_entries" frontend/offline-store.js
+          grep -q "document_checks" frontend/offline-store.js
+          grep -q "fa-IR-u-ca-persian" frontend/app.js
+          grep -q "CallerId" mobile/src/native-entry.js
+          grep -q "AttachmentViewer" mobile/src/native-entry.js
+          grep -q "READ_CONTACTS" mobile/scripts/install-caller-id.mjs
+          grep -q "SCHEDULE_EXACT_ALARM" mobile/scripts/install-caller-id.mjs
+          grep -q "checkExactNotificationSetting" frontend/app.js
+          grep -q "changeExactNotificationSetting" frontend/app.js
+          grep -q "createReminderChannel" frontend/app.js
+          grep -q "scheduleIndependentReminder" frontend/app.js
+          grep -q "allowWhileIdle:true" frontend/app.js
+          grep -q "importDeviceContacts" frontend/app.js
+          ! grep -R "crm_server_url\|trycloudflare\|http://localhost:8000" frontend mobile/src mobile/native-caller-id
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+      - name: Build native web bundle
+        working-directory: mobile
+        run: npm run prepare:web
+      - name: Verify offline bundle
+        run: |
+          cmp frontend/app.js mobile/www/app.js
+          cmp frontend/offline-store.js mobile/www/offline-store.js
+          grep -q "OfflineDB" mobile/www/app.js
+          grep -q "LocalNotifications" mobile/www/native-bridge.js
+          grep -q "CallerId" mobile/www/native-bridge.js
+          grep -q "AttachmentViewer" mobile/www/native-bridge.js

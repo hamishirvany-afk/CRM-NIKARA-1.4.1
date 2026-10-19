@@ -1,0 +1,47 @@
+import fs from 'node:fs';
+
+function assert(cond,msg){ if(!cond){ console.error('ANDROID_CONTRACT_FAIL:',msg); process.exit(1); } }
+const app=fs.readFileSync('frontend/app.js','utf8');
+const installer=fs.readFileSync('mobile/scripts/install-caller-id.mjs','utf8');
+const viewer=fs.readFileSync('mobile/native-caller-id/AttachmentViewerPlugin.java','utf8');
+const caller=fs.readFileSync('mobile/native-caller-id/CallerIdActivity.java','utf8');
+const pkg=JSON.parse(fs.readFileSync('mobile/package.json','utf8'));
+const apkWorkflow=fs.readFileSync('.github/workflows/android-apk.yml','utf8');
+const releaseWorkflow=fs.readFileSync('.github/workflows/android-release.yml','utf8');
+
+assert(installer.includes('android.permission.SCHEDULE_EXACT_ALARM'),'exact alarm manifest permission missing');
+assert(installer.includes('android.permission.POST_NOTIFICATIONS'),'notification permission missing');
+assert(installer.includes('android.permission.READ_CONTACTS'),'contacts permission missing');
+assert(installer.includes('android.permission.USE_FULL_SCREEN_INTENT'),'full-screen permission missing');
+assert(app.includes('checkExactNotificationSetting'),'exact alarm status check missing');
+assert(app.includes('changeExactNotificationSetting'),'exact alarm settings handoff missing');
+assert(app.includes('allowWhileIdle:true'),'Doze-safe reminder scheduling missing');
+const listeners=(app.match(/addListener\(['\"]localNotificationActionPerformed['\"]/g)||[]).length;
+assert(listeners===1,`expected exactly one localNotificationActionPerformed listener, got ${listeners}`);
+const handler=app.indexOf("addListener('localNotificationActionPerformed'");
+const meeting=app.indexOf('meeting_id',handler);
+const project=app.indexOf('project_id',handler);
+assert(handler>=0 && meeting>handler && project>meeting,'meeting notification must be handled before project/contact fallback');
+assert(pkg.version==='1.4.0','mobile package version must be 1.3.0');
+assert(installer.includes("const fileProviderAuthority = '${applicationId}.fileprovider'"),'Gradle-safe FileProvider authority missing');
+assert(installer.includes('versionCode 10400')&&installer.includes('versionName "1.4.0"'),'Android release identity mismatch');
+assert(apkWorkflow.includes("grep -Fq '${applicationId}.fileprovider'"),'debug workflow FileProvider verification mismatch');
+assert(releaseWorkflow.includes("grep -Fq '${applicationId}.fileprovider'"),'release workflow FileProvider verification mismatch');
+assert(apkWorkflow.includes('CRM-NIKARA-v1.4.0-FINAL-debug'),'debug artifact version mismatch');
+assert(releaseWorkflow.includes('CRM-NIKARA-v1.4.0-FINAL-RELEASE'),'release artifact version mismatch');
+const forbiddenBrand=['I','R','A','N'].join('');
+assert(!new RegExp(forbiddenBrand,'i').test(apkWorkflow+releaseWorkflow),'release artifacts contain obsolete regional branding');
+assert(viewer.includes('MimeTypeMap'),'attachment MIME fallback missing');
+assert(caller.includes('company_finance'),'company finance must be visible in caller profile');
+assert(app.includes('refreshReminderStatus'),'reminder diagnostics missing');
+assert(app.includes("syncCallerIdContacts()"),'caller cache sync missing');
+assert(installer.includes('android.permission.SYSTEM_ALERT_WINDOW')&&installer.includes('CallerIdOverlay.java'),'caller overlay not installed');
+assert(fs.readFileSync('mobile/native-caller-id/CallerIdPlugin.java','utf8').includes('simulateIncomingCall'),'caller simulation missing');
+const printPlugin=fs.readFileSync('mobile/native-caller-id/InvoicePrintPlugin.java','utf8');
+const pdfBridge=fs.readFileSync('mobile/native-caller-id/NikaraPdfWriter.java','utf8');
+assert(printPlugin.includes('@CapacitorPlugin(name = "NikaraPrint")')&&printPlugin.includes('createPrintDocumentAdapter'),'invoice print plugin missing');
+assert(printPlugin.includes('ACTION_SEND')&&printPlugin.includes('MediaStore.Downloads'),'invoice PDF share/save missing');
+assert(pdfBridge.startsWith('package android.print;'),'PDF bridge must be in android.print');
+assert(installer.includes('registerPlugin(InvoicePrintPlugin.class)')&&installer.includes('NikaraPdfWriter.java'),'invoice print plugin not installed');
+assert(app.includes("exportInvoicePdf('${inv.id}','share')")&&app.includes("exportInvoicePdf('${inv.id}','save')")&&app.includes("exportInvoicePdf('${inv.id}','attach')"),'invoice share/save buttons missing');
+console.log('ANDROID_CONTRACT_PASS');
